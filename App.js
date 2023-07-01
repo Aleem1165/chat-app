@@ -1,15 +1,15 @@
-import "react-native-gesture-handler"
-
-import { StatusBar } from "expo-status-bar";
+import "react-native-gesture-handler";
 import { StyleSheet, Text, View, TextInput } from "react-native";
 import axios from "axios";
 import { useEffect } from "react";
-import Login from "./src/view/login";
 import Navigation from "./src/navigation";
 import { NavigationContainer } from "@react-navigation/native";
+import { Provider } from "react-redux";
+import { persistor, store } from "./src/store";
+import { PersistGate } from "redux-persist/integration/react";
 
 export default function App() {
-  const backendURL = "http://192.168.0.106:6000/";``
+  const backendURL = "http://192.168.0.106:6000/";
   useEffect(() => {
     (async () => {
       try {
@@ -21,14 +21,14 @@ export default function App() {
     })();
   }, []);
   return (
-    // <View style={styles.container}>
-    // </View>
-     <NavigationContainer>
-      <Navigation/>
-     </NavigationContainer>
-  )
-
-  
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <NavigationContainer>
+          <Navigation />
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
+  );
 }
 
 const styles = StyleSheet.create({
