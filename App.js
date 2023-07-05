@@ -7,9 +7,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "react-redux";
 import { persistor, store } from "./src/store";
 import { PersistGate } from "redux-persist/integration/react";
+import backendURL from "./backendURL";
 
 export default function App() {
-  const backendURL = "http://192.168.0.106:6000/";
+
+  // 192.168.0.106
+  // const backendURL = "http://192.168.0.192:6000/";
   useEffect(() => {
     (async () => {
       try {

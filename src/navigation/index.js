@@ -17,6 +17,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSelector } from "react-redux";
 import NewChat from "../view/newChat";
 import ChatRooms from "../view/chatRoom";
+import ChatRoomHeader from "../component/chatRoomHeader";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -122,13 +123,9 @@ function Navigation() {
             drawerItemStyle:{height:0},
             headerShown:false
             // headerTitle: (props) => <HeaderSearch {...props} />,
-            // drawerIcon: ({ color }) => (
-            //   <Ionicons
-            //     name="chatbubbles-sharp"
-            //     size={25}
-            //     color={color}
-            //   ></Ionicons>
-            // ),
+            // headerTitle: "",
+            // header: () => <ChatRoomHeader name={"Login"} />,
+           
           }}
         />
       </Drawer.Navigator>
@@ -138,7 +135,6 @@ function Navigation() {
     <View
       style={{
         flex: 1,
-        backgroundColor: "red",
       }}
     >
       <MyDrawer />
@@ -147,7 +143,6 @@ function Navigation() {
     <View
       style={{
         flex: 1,
-        backgroundColor: "red",
       }}
     >
       <MyStack />

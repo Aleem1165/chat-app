@@ -10,9 +10,10 @@ import { useSelector } from "react-redux";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import backendURL from "../../../backendURL";
 
 export default function NewChat({ navigation }) {
-  const backendURL = "http://192.168.0.106:6000/";
+  // const backendURL = "http://192.168.0.106:6000/";
 
   const reduxUid = useSelector((state) => state);
   const currUserData = useSelector((state) => state.CurUserDataSlice.currUser);

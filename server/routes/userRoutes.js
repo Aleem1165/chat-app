@@ -10,7 +10,7 @@ const {
   adMessageInChatRoom,
   existingChatRoom,
   getAllChatRooms,
-  getSingleChatRoom
+  getSingleChatRoom,
 } = require(`../controllers/userController`);
 
 router.post(`/signup`, signupUser);
@@ -25,6 +25,7 @@ router.post(`/adMsg`, adMessageInChatRoom);
 router.post(`/existingChatRoom`, existingChatRoom);
 router.get(`/getAllChetRooms`, getAllChatRooms);
 router.post(`/getSingleChatRoom`, getSingleChatRoom);
+
 
 
 

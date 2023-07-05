@@ -2,6 +2,8 @@ const {userCheck , chatRoomCheck} = require("../scheme/userSchema");
 const bcrypt = require("bcrypt");
 let jwt = require(`jsonwebtoken`);
 
+
+
 module.exports.signupUser = async (req, res) => {
   // console.log(req.body);
   const { name, email, password , imageUri } = req.body;
@@ -124,6 +126,7 @@ module.exports.createChatRoom = async (req , res) => {
 module.exports.adMessageInChatRoom = async (req , res) => {
   const { _id , obj } = req.body
   
+  console.log(_id , obj);
   try{
     const addMessage = await chatRoomCheck.updateOne({_id} , {$push : {"messages":obj}})
     const findUpdated = await chatRoomCheck.find({_id})
@@ -205,5 +208,7 @@ module.exports.getSingleChatRoom = async (req , res) => {
     })
   }
 }
+
+
 
 

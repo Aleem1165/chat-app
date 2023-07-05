@@ -1,12 +1,21 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from "react-native";
 import { useSelector } from "react-redux";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import backendURL from "../../../backendURL";
 
-export default function Chats({navigation}) {
+export default function Chats({ navigation }) {
   const [allChatsData, setAllChatsData] = useState();
 
-  const backendURL = "http://192.168.0.106:6000/";
+  // const backendURL = "http://192.168.0.106:6000/";
 
   const reduxUid = useSelector((state) => state);
   const currUserData = useSelector((state) => state.CurUserDataSlice.currUser);
@@ -30,7 +39,12 @@ export default function Chats({navigation}) {
 
         const currUserChats = currUserChats1.concat(currUserChats2);
         console.log("currUserChats===>", currUserChats);
-        setAllChatsData(currUserChats);
+        // setAllChatsData(currUserChats)
+        if (currUserChats.length > 0) {
+          setAllChatsData(currUserChats);
+        } else {
+          setAllChatsData();
+        }
       } catch (error) {
         console.log(error.message);
       }
@@ -45,49 +59,91 @@ export default function Chats({navigation}) {
 
   // console.log(allChatsData);
 
-  const handleMoveChatRoom = async (item , index) => {
-    navigation.navigate("ChatRoom" , {_id:item._id})
-  }
+  console.log(allChatsData);
+  const handleMoveChatRoom = async (item, index) => {
+    navigation.navigate("ChatRoom", { _id: item._id });
+  };
   return (
-    <View
-      style={{
-        flex: 1,
-        // backgroundColor: "red",
-      }}
-    >
-      {allChatsData &&
-        allChatsData.map((item, index) => {
-          // console.log(item.chatroomName);
-          return (
-            <TouchableOpacity
-            key={index}
-            onPress={() => {
-              handleMoveChatRoom(item , index)
-            }}
-            >
-              <View
-                style={{
-                  backgroundColor: "green",
-                  marginTop: 10,
+    <View style={styles.container}>
+      <ScrollView>
+        {allChatsData ? (
+          allChatsData.map((item, index) => {
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  handleMoveChatRoom(item, index);
                 }}
-                
               >
-                <Image
-                  source={{
-                    uri: item.imageUri.replace(currUserData.imageUri, ""),
-                  }}
-                  resizeMode="contain"
+                <View style={styles.mapView}>
+                  <Image
+                    source={{
+                      uri: item.imageUri.replace(currUserData.imageUri, ""),
+                    }}
+                    resizeMode="contain"
+                    style={styles.mapImg}
+                  />
+                  <Text
                   style={{
-                    width: 50,
-                    height: 50,
-                    borderRadius: 50,
+                    fontSize:15,
+                    fontWeight:"bold"
                   }}
-                />
-                <Text>{item.chatroomName.replace(currUserData.name, "")}</Text>
-              </View>
+                  >
+                    {item.chatroomName.replace(currUserData.name, "")}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          })
+        ) : (
+          <View style={styles.view}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("NewChat");
+              }}
+              style={styles.touchO}
+            >
+              <Ionicons name="add-circle" size={40}></Ionicons>
+              <Text style={styles.text}>Start chat!</Text>
             </TouchableOpacity>
-          );
-        })}
+          </View>
+        )}
+      </ScrollView>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  mapView: {
+    display:"flex",
+    flexDirection:"row",
+    alignItems:"center",
+    paddingVertical:5,
+    borderBottomColor:"black",
+    borderBottomWidth:2,
+    borderStyle:"solid"
+    
+  },
+  mapImg: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    marginHorizontal:10
+  },
+  view: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  touchO: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+});
