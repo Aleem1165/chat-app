@@ -12,7 +12,10 @@ import { removeCurrUserData } from "../../store/currUserDataSlice";
 const CustumDrawer = (props) => {
   const dispatch = useDispatch();
 
+
   const currUserData = useSelector((state) => state.CurUserDataSlice.currUser);
+  const reduxTheme = useSelector((state) => state.ThemeSlice.theme);
+
   // console.log(currUserData);
 
   const handleLogout = async () => {
@@ -21,8 +24,11 @@ const CustumDrawer = (props) => {
   };
 
   return (
-    <View style={styles.container}>
-      <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
+    <View style={reduxTheme ? styles.containerBlack : styles.container}>
+      <DrawerContentScrollView
+        {...props}
+        contentContainerStyle={{ flex: 1 }}
+      >
         <Image
           source={{
             uri: currUserData.imageUri,
@@ -49,6 +55,10 @@ export default CustumDrawer;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  containerBlack: {
+    flex: 1,
+    backgroundColor:"#13151B"
   },
   imgStyle: {
     width: 200,

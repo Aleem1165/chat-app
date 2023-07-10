@@ -10,24 +10,39 @@ import { useSelector } from "react-redux";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import backendURL from "../../../backendURL";
+import backendURL from "../../config/backendURL";
+import socket from "../../config/io";
 
 export default function NewChat({ navigation }) {
   // const backendURL = "http://192.168.0.106:6000/";
 
+  const [allUserData, setAllUserData] = useState("");
   const reduxUid = useSelector((state) => state);
   const currUserData = useSelector((state) => state.CurUserDataSlice.currUser);
-  // console.log(currUserData.name);
+  // console.log(allUserData);
 
-  const [allUserData, setAllUserData] = useState("");
+  // socket.on(`message` , (users)=>{
+  //   console.log("socket===>",users)
+  //   // setAllUserData(allUserData => [...allUserData , users])
+  //   // setAllUserData(allUserData.push(users))
+  // })
+
+  useEffect(() => {
+    socket.on(`message`, (users) => {
+      console.log("socket", users);
+      setAllUserData((allUserData) => [...allUserData, users]);
+    });
+  }, [socket]);
 
   useEffect(() => {
     (async () => {
       try {
         const { data } = await axios.get(backendURL + "apis/user/userData");
         // console.log(data.data);
-        const allData = data.data
-        const filterArr = allData.filter(allData => allData._id !== currUserData._id)
+        const allData = data.data;
+        const filterArr = allData.filter(
+          (allData) => allData._id !== currUserData._id
+        );
         // console.log("filterArr===>" , filterArr);
         setAllUserData(filterArr);
       } catch (error) {
@@ -37,9 +52,8 @@ export default function NewChat({ navigation }) {
   }, []);
 
   const handleCreateChatRoom = async (item, index) => {
-    const chatroomName =
-      item.name + currUserData.name 
-      // || currUserData.name + item.name;
+    const chatroomName = item.name + currUserData.name;
+    // || currUserData.name + item.name;
     const { data } = await axios.post(
       backendURL + "apis/user/existingChatRoom",
       {
@@ -47,7 +61,7 @@ export default function NewChat({ navigation }) {
       }
     );
     // console.log("1st concole", data);
-    
+
     if (data.message == "existingChat find") {
       navigation.navigate("ChatRoom", { data: data });
     } else {
@@ -57,17 +71,20 @@ export default function NewChat({ navigation }) {
         {
           chatroomName,
         }
-      )
+      );
       if (data.message == "existingChat find") {
         navigation.navigate("ChatRoom", { data: data });
       } else {
-        const {data} = await axios.post(backendURL + "apis/user/createChatRoom", {
-          uid: currUserData._id,
-          uid2: item._id,
-          chatroomName: currUserData.name + item.name,
-          imageUri: item.imageUri + currUserData.imageUri,
-          message: [],
-        });
+        const { data } = await axios.post(
+          backendURL + "apis/user/createChatRoom",
+          {
+            uid: currUserData._id,
+            uid2: item._id,
+            chatroomName: currUserData.name + item.name,
+            imageUri: item.imageUri + currUserData.imageUri,
+            message: [],
+          }
+        );
         navigation.navigate("ChatRoom", { data: data });
       }
     }

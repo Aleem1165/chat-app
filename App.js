@@ -7,7 +7,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Provider } from "react-redux";
 import { persistor, store } from "./src/store";
 import { PersistGate } from "redux-persist/integration/react";
-import backendURL from "./backendURL";
+import backendURL from "./src/config/backendURL";
 
 export default function App() {
 

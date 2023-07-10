@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
   Button,
@@ -13,10 +13,15 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { handleAddUid } from "../../store/uidSlice";
 import { adCurrUserData } from "../../store/currUserDataSlice";
-import backendURL from "../../../backendURL";
+import backendURL from "../../config/backendURL";
+import socket from "../../config/io"
 
 export default function Login({ navigation }) {
   const reduxTheme = useSelector((state) => state.ThemeSlice.theme);
+
+
+
+  
 
   const dispatch = useDispatch();
 

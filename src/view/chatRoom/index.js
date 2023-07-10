@@ -1,10 +1,5 @@
 import axios from "axios";
-import {
-  useEffect,
-  useState,
-  scrollViewRef,
-  scrollToEnd,
-} from "react";
+import { useEffect, useState, scrollViewRef, scrollToEnd } from "react";
 import {
   View,
   Text,
@@ -14,32 +9,35 @@ import {
   Button,
   StyleSheet,
   TouchableOpacity,
-  KeyboardAvoidingView
 } from "react-native";
 import { useSelector } from "react-redux";
 import ChatRoomHeader from "../../component/chatRoomHeader";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React from "react";
-import backendURL from "../../../backendURL";
+import backendURL from "../../config/backendURL";
+import socket from "../../config/io";
 
 export default function ChatRooms({ route, navigation }) {
-  // const backendURL = "http://192.168.0.106:6000/";
-
   const [chatRoomData, setChatRoomData] = useState();
   const [message, setMessage] = useState("");
   const [oldMessage, setOldMessage] = useState("");
-  const [refresh, setRefresh] = useState(false);
 
   const reduxUid = useSelector((state) => state);
   const currUserData = useSelector((state) => state.CurUserDataSlice.currUser);
-  // console.log(currUserData);
 
   const _id = route.params._id || route.params.data.data._id;
 
-  // const interval = setInterval(() => {
-  //   setRefresh(!refresh)
-  // }, 2000);
-  // // console.log(refresh);
+  useEffect(() => {
+    socket.on(`msg`, (msg) => {
+      const id = msg._id;
+      const data = msg.msg;
+      let [firstKey] = Object.keys(data);
+      if (id == _id) {
+        setOldMessage((oldMessage) => [...oldMessage, data[firstKey]]);
+      }
+    });
+  }, [socket]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -49,24 +47,16 @@ export default function ChatRooms({ route, navigation }) {
             _id,
           }
         );
-        // console.log("originalData====>" , data.data[0].messages);
         setChatRoomData(data.data[0]);
         setOldMessage(data.data[0].messages);
       } catch (error) {
         console.log(error.message);
       }
     })();
-  }, [_id, refresh]);
-  // console.log("oldMessage===>", oldMessage);
+  }, [_id]);
 
-  //   let name = "Aleem2"
-  //   let chatRoomNAme = "AleemAleem2"
-  //   let newString = chatRoomNAme.replace(name , "")
-  //   console.log(newString);
-  // console.log(oldMessage);
   const uri =
     chatRoomData && chatRoomData.imageUri.replace(currUserData.imageUri, "");
-  // console.log(uri);
   const name =
     chatRoomData && chatRoomData.chatroomName.replace(currUserData.name, "");
 
@@ -88,17 +78,12 @@ export default function ChatRooms({ route, navigation }) {
 
     console.log(data);
     setMessage("");
-    setRefresh(!refresh);
   };
 
   const scrollViewRef = React.useRef();
 
   return (
-    <View
-      style={{
-        flex: 1,
-      }}
-    >
+    <View style={styles.container}>
       <ChatRoomHeader
         name={name ? name : "name"}
         uri={
@@ -108,111 +93,53 @@ export default function ChatRooms({ route, navigation }) {
         }
         navigation={navigation}
       />
-      <View
-        style={{
-          flex: 1,
-          // backgroundColor: "yellow",
-        }}
-      >
+      <View style={styles.chatContainer}>
         <ScrollView
           ref={scrollViewRef}
           nestedScrollEnabled={true}
           onContentSizeChange={(contentWidth, contentHeight) => {
             scrollViewRef.current?.scrollTo({ y: contentHeight });
           }}
-          style={{
-            flex: 1,
-          }}
+          style={styles.scrollviewStyle}
         >
-          {/* <KeyboardAvoidingView
-          behavior="position"
-          // behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={{
-            flex:1
-          }}
-          > */}
-            {oldMessage &&
-              oldMessage.map((item, index) => {
-                return (
+          {oldMessage &&
+            oldMessage.map((item, index) => {
+              return (
+                <View
+                  key={index}
+                  style={
+                    item.uid === currUserData._id
+                      ? styles.mapViewWithUid
+                      : styles.mapViewWithoutUid
+                  }
+                >
                   <View
-                    key={index}
                     style={
                       item.uid === currUserData._id
-                        ? {
-                            // backgroundColor: "red",
-                            marginTop: 5,
-                            alignItems: "flex-end",
-                            // height:40,
-                            justifyContent: "center",
-                            paddingHorizontal: 10,
-                            // width:200
-                          }
-                        : {
-                            // backgroundColor: "red",
-                            marginTop: 5,
-                            // height:40,
-                            justifyContent: "center",
-                            paddingHorizontal: 10,
-                            // width:200
-                            alignItems: "flex-start",
-                          }
+                        ? styles.msgViewWithUid
+                        : styles.msgViewWithoutUid
                     }
                   >
-                    <View
+                    <Text style={styles.msgText}>{item.message}</Text>
+                    <Text
                       style={
                         item.uid === currUserData._id
-                          ? {
-                              backgroundColor: "#03a9f4",
-                              padding: 10,
-                              borderTopLeftRadius: 10,
-                              borderTopRightRadius: 10,
-                              borderBottomLeftRadius: 10,
-                            }
-                          : {
-                              backgroundColor: "#03a9f4",
-                              padding: 10,
-                              borderTopLeftRadius: 10,
-                              borderTopRightRadius: 10,
-                              borderBottomRightRadius: 10,
-                            }
+                          ? styles.msgTimeWithUid
+                          : styles.msgTimeWithoutUid
                       }
                     >
-                      <Text
-                        style={{
-                          fontSize: 16,
-                          // fontWeight:"400"
-                        }}
-                      >
-                        {item.message}
-                      </Text>
-                      <Text
-                        style={
-                          item.uid === currUserData._id
-                            ? {
-                                alignSelf: "flex-end",
-                                fontSize: 12,
-                              }
-                            : {
-                                alignSelf: "flex-start",
-                                fontSize: 12,
-                              }
-                        }
-                      >
-                        {item.time}
-                      </Text>
-                    </View>
+                      {item.time}
+                    </Text>
                   </View>
-                );
-              })}
-            {/* </View> */}
-          {/* </KeyboardAvoidingView> */}
+                </View>
+              );
+            })}
         </ScrollView>
 
         <View style={styles.inputView}>
           <TextInput
             style={styles.input}
             placeholder={"Message"}
-            // secureTextEntry={showPass ? false : true}
             onChange={(e) => setMessage(e.nativeEvent.text)}
             value={message}
           />
@@ -230,6 +157,9 @@ export default function ChatRooms({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   inputView: {
     alignSelf: "flex-end",
     display: "flex",
@@ -257,5 +187,48 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     flex: 1,
+  },
+  chatContainer: {
+    flex: 1,
+  },
+  scrollviewStyle: {
+    flex: 1,
+  },
+  mapViewWithUid: {
+    marginTop: 5,
+    alignItems: "flex-end",
+    justifyContent: "center",
+    paddingHorizontal: 10,
+  },
+  mapViewWithoutUid: {
+    marginTop: 5,
+    justifyContent: "center",
+    paddingHorizontal: 10,
+    alignItems: "flex-start",
+  },
+  msgViewWithUid: {
+    backgroundColor: "#03a9f4",
+    padding: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
+  },
+  msgViewWithoutUid: {
+    backgroundColor: "#03a9f4",
+    padding: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  msgText: {
+    fontSize: 16,
+  },
+  msgTimeWithUid: {
+    alignSelf: "flex-end",
+    fontSize: 12,
+  },
+  msgTimeWithoutUid: {
+    alignSelf: "flex-start",
+    fontSize: 12,
   },
 });

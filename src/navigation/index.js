@@ -1,13 +1,7 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-} from "react-native";
+import { View } from "react-native";
 import Login from "../view/login";
 import Signup from "../view/signup";
 import AuthHeader from "../component/authHeader";
@@ -17,7 +11,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useSelector } from "react-redux";
 import NewChat from "../view/newChat";
 import ChatRooms from "../view/chatRoom";
-import ChatRoomHeader from "../component/chatRoomHeader";
+import Header from "../component/header";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -49,37 +43,7 @@ function Navigation() {
       </Stack.Navigator>
     );
   };
-  function HeaderSearch() {
-    return (
-      <View style={(styles.headerSearchStyle)}>
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.input}
-            placeholder={"Email"}
-            // onChange={(e) => setEmail(e.nativeEvent.text)}
-            // value={email}
-          />
-        </View>
-        {reduxTheme ? (
-          <TouchableOpacity
-            onPress={() => {
-              dispatch(handleFalse());
-            }}
-          >
-            <Ionicons name="sunny" size={30}></Ionicons>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPress={() => {
-              dispatch(handleTrue());
-            }}
-          >
-            <Ionicons name="moon-sharp" size={30}></Ionicons>
-          </TouchableOpacity>
-        )}
-      </View>
-    );
-  }
+ 
   const MyDrawer = () => {
     return (
       <Drawer.Navigator
@@ -91,8 +55,16 @@ function Navigation() {
         <Drawer.Screen
           name="Chats"
           component={Chats}
+          
           options={{
-            headerTitle: (props) => <HeaderSearch {...props} />,
+          drawerActiveTintColor:reduxTheme ? "white" : "#03a9f4" ,
+            drawerInactiveTintColor:reduxTheme ? "gray" : "black",
+            headerStyle:{
+              backgroundColor:reduxTheme ? "#13151B" : "white",
+            
+            },
+            headerTintColor:reduxTheme ? "white" : "black",
+            headerTitle: (props) => <Header {...props} name={"Chats"} />,
             drawerIcon: ({ color }) => (
               <Ionicons
                 name="chatbubbles-sharp"
@@ -106,7 +78,14 @@ function Navigation() {
           name="NewChat"
           component={NewChat}
           options={{
-            headerTitle: (props) => <HeaderSearch {...props} />,
+            drawerActiveTintColor:reduxTheme ? "white" : "#03a9f4" ,
+            drawerInactiveTintColor:reduxTheme ? "gray" : "black",
+            headerStyle:{
+              backgroundColor:reduxTheme ? "#13151B" : "white",
+            
+            },
+            headerTintColor:reduxTheme ? "white" : "black",
+            headerTitle: (props) => <Header {...props} name={"Select user"} />,
             drawerIcon: ({ color }) => (
               <Ionicons
                 name="chatbubbles-sharp"
@@ -116,16 +95,12 @@ function Navigation() {
             ),
           }}
         />
-         <Drawer.Screen
+        <Drawer.Screen
           name="ChatRoom"
           component={ChatRooms}
           options={{
-            drawerItemStyle:{height:0},
-            headerShown:false
-            // headerTitle: (props) => <HeaderSearch {...props} />,
-            // headerTitle: "",
-            // header: () => <ChatRoomHeader name={"Login"} />,
-           
+            drawerItemStyle: { height: 0 },
+            headerShown: false,
           }}
         />
       </Drawer.Navigator>
@@ -152,36 +127,3 @@ function Navigation() {
 
 export default Navigation;
 
-const styles = StyleSheet.create({
-  inputView: {
-    flex: 1,
-    alignSelf: "stretch",
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 10,
-    marginRight: 20,
-    padding: 10,
-    backgroundColor: "#F2F2F2",
-    shadowColor: "black",
-    shadowOffset: {
-      width: 6,
-      height: 6,
-    },
-    shadowOpacity: 0.58,
-    shadowRadius: 10.0,
-
-    elevation: 5,
-  },
-  input: {
-    width: "100%",
-    flex: 1,
-  },
-  headerSearchStyle: {
-    width: 290,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
