@@ -9,12 +9,12 @@ export default function ChatRoomHeader(props) {
   const reduxTheme = useSelector((state) => state.ThemeSlice.theme);
 
   return (
-    <View style={styles.header}>
+    <View style={reduxTheme ? styles.headerBlack : styles.header}>
       <View
         style={{
           flexDirection: "row",
           alignItems: "center",
-          //   backgroundColor: "red",
+          // backgroundColor: "red",
         }}
       >
         <TouchableOpacity
@@ -22,37 +22,28 @@ export default function ChatRoomHeader(props) {
             props.navigation.navigate("Chats");
           }}
         >
-          <Ionicons name="chevron-back" size={30}></Ionicons>
+          <Ionicons
+            name="chevron-back"
+            size={30}
+            color={reduxTheme ? "white" : "black"}
+          ></Ionicons>
         </TouchableOpacity>
         <Image
           source={{
             uri: props.uri,
           }}
           resizeMode="contain"
-          style={{
-            width: 50,
-            height: 50,
-            borderRadius: 50,
-            // marginLeft:10
-          }}
+          style={styles.profileImg}
         />
-
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: "bold",
-            marginLeft: 10,
-          }}
-        >
+        <Text style={reduxTheme ? styles.nameBlack : styles.name}>
           {props.name}
         </Text>
       </View>
       <View
-      style={{
-        alignItems:"center",
-        // backgroundColor:"red",
-        marginBottom:10
-      }}
+        style={{
+          alignItems: "center",
+          marginBottom: 10,
+        }}
       >
         {reduxTheme ? (
           <TouchableOpacity
@@ -60,7 +51,7 @@ export default function ChatRoomHeader(props) {
               dispatch(handleFalse());
             }}
           >
-            <Ionicons name="sunny" size={30}></Ionicons>
+            <Ionicons name="sunny" color={"white"} size={30}></Ionicons>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
@@ -86,5 +77,31 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingRight: 5,
     paddingBottom: 5,
+  },
+  headerBlack: {
+    backgroundColor: "#13151B",
+    height: 90,
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "space-between",
+    paddingRight: 5,
+    paddingBottom: 5,
+  },
+  profileImg: {
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+  },
+  name: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginLeft: 10,
+  },
+  nameBlack: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginLeft: 10,
+    color: "white",
   },
 });

@@ -14,14 +14,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { handleAddUid } from "../../store/uidSlice";
 import { adCurrUserData } from "../../store/currUserDataSlice";
 import backendURL from "../../config/backendURL";
-import socket from "../../config/io"
+import socket from "../../config/io";
 
 export default function Login({ navigation }) {
   const reduxTheme = useSelector((state) => state.ThemeSlice.theme);
-
-
-
-  
 
   const dispatch = useDispatch();
 
@@ -31,34 +27,45 @@ export default function Login({ navigation }) {
   const [password, setPassword] = useState("");
 
   const handleLogin = async () => {
-    setLoader(true);
-    const { data } = await axios.post(backendURL + "apis/user/login", {
-      email,
-      password,
-    });
-    alert(data.message);
+    try {
+      setLoader(true);
+      const { data } = await axios.post(backendURL + "apis/user/login", {
+        email,
+        password,
+      });
+      alert(data.message);
 
-    if (data.message == "login Successfully") {
-      setEmail("");
-      setPassword("");
-      const currUserData = data.data[0];
-      const uid = data.data[0]._id;
-      dispatch(adCurrUserData(currUserData));
-      dispatch(handleAddUid(uid));
-      setLoader(false);
-    } else {
-      switch (data.message) {
-        case "user not found":
-          return (
-            alert(data.message), setEmail(""), setPassword(""), setLoader(false)
-          );
-        case "incorrect password":
-          return alert(data.message), setPassword(""), setLoader(false);
-        case "login Successfully":
-          return (
-            alert(data.message), setEmail(""), setPassword(""), setLoader(false)
-          );
+      if (data.message == "login Successfully") {
+        setEmail("");
+        setPassword("");
+        const currUserData = data.data[0];
+        const uid = data.data[0]._id;
+        dispatch(adCurrUserData(currUserData));
+        dispatch(handleAddUid(uid));
+        setLoader(false);
+      } else {
+        switch (data.message) {
+          case "user not found":
+            return (
+              alert(data.message),
+              setEmail(""),
+              setPassword(""),
+              setLoader(false)
+            );
+          case "incorrect password":
+            return alert(data.message), setPassword(""), setLoader(false);
+          case "login Successfully":
+            return (
+              alert(data.message),
+              setEmail(""),
+              setPassword(""),
+              setLoader(false)
+            );
+        }
       }
+    } catch (error) {
+      alert(error.message);
+      setLoader(false);
     }
   };
 
@@ -78,11 +85,15 @@ export default function Login({ navigation }) {
       >
         <View style={styles.changePageBtnView}>
           <TouchableOpacity
-            style={reduxTheme ? styles.changePAgeBtnBlack : styles.changePAgeBtn}
+            style={
+              reduxTheme ? styles.changePAgeBtnBlack : styles.changePAgeBtn
+            }
           >
             <Text
               style={
-                reduxTheme ? styles.changePageBtnTextBlack : styles.changePageBtnText
+                reduxTheme
+                  ? styles.changePageBtnTextBlack
+                  : styles.changePageBtnText
               }
             >
               Login

@@ -11,35 +11,30 @@ import {
 import { useSelector } from "react-redux";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import backendURL from "../../config/backendURL";
-import socket from "../../config/io"
+import socket from "../../config/io";
 
 export default function Chats({ navigation }) {
   const [allChatsData, setAllChatsData] = useState();
-
 
   const reduxUid = useSelector((state) => state);
   const currUserData = useSelector((state) => state.CurUserDataSlice.currUser);
   const reduxTheme = useSelector((state) => state.ThemeSlice.theme);
 
-
-  
-  
   useEffect(() => {
-    socket.on(`existingChat` , (existingChat)=>{
-      console.log("socket===>",existingChat)
+    socket.on(`existingChat`, (existingChat) => {
+      console.log("socket===>", existingChat);
       const forCurrUser = existingChat.filter(
         (existingChat) => existingChat.uid == currUserData._id
       );
       const forCurrUser2 = existingChat.filter(
         (existingChat) => existingChat.uid2 == currUserData._id
       );
-      const finalCurrUserChat = forCurrUser.concat(forCurrUser2)
+      const finalCurrUserChat = forCurrUser.concat(forCurrUser2);
       console.log(finalCurrUserChat);
       setAllChatsData(finalCurrUserChat);
-    })
-    
-  }, [socket])
-  
+    });
+  }, [socket]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -60,8 +55,7 @@ export default function Chats({ navigation }) {
         } else {
           setAllChatsData();
         }
-      } catch (error) {
-      }
+      } catch (error) {}
     })();
   }, []);
 
@@ -69,7 +63,7 @@ export default function Chats({ navigation }) {
     navigation.navigate("ChatRoom", { _id: item._id });
   };
   return (
-    <View style={reduxTheme ? styles.containerBlack : styles.container }>
+    <View style={reduxTheme ? styles.containerBlack : styles.container}>
       <ScrollView>
         {allChatsData ? (
           allChatsData.map((item, index) => {
@@ -80,7 +74,7 @@ export default function Chats({ navigation }) {
                   handleMoveChatRoom(item, index);
                 }}
               >
-                <View style={reduxTheme? styles.mapViewBlack : styles.mapView}>
+                <View style={reduxTheme ? styles.mapViewBlack : styles.mapView}>
                   <Image
                     source={{
                       uri: item.imageUri.replace(currUserData.imageUri, ""),
@@ -89,7 +83,7 @@ export default function Chats({ navigation }) {
                     style={styles.mapImg}
                   />
                   <Text
-                  style={reduxTheme ? styles.mapTextBlack : styles.mapText}
+                    style={reduxTheme ? styles.mapTextBlack : styles.mapText}
                   >
                     {item.chatroomName.replace(currUserData.name, "")}
                   </Text>
@@ -105,8 +99,14 @@ export default function Chats({ navigation }) {
               }}
               style={styles.touchO}
             >
-              <Ionicons name="add-circle" size={40}></Ionicons>
-              <Text style={styles.text}>Start chat!</Text>
+              <Ionicons
+                name="add-circle"
+                color={reduxTheme ? "white" : "black"}
+                size={40}
+              ></Ionicons>
+              <Text style={reduxTheme ? styles.textBlack : styles.text}>
+                Start chat!
+              </Text>
             </TouchableOpacity>
           </View>
         )}
@@ -121,42 +121,40 @@ const styles = StyleSheet.create({
   },
   containerBlack: {
     flex: 1,
-    backgroundColor:"#13151B"
+    backgroundColor: "#13151B",
   },
   mapView: {
-    display:"flex",
-    flexDirection:"row",
-    alignItems:"center",
-    paddingVertical:5,
-    borderBottomColor:"black",
-    borderBottomWidth:2,
-    borderStyle:"solid"
-    
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 5,
+    borderBottomColor: "black",
+    borderBottomWidth: 2,
+    borderStyle: "solid",
   },
   mapViewBlack: {
-    display:"flex",
-    flexDirection:"row",
-    alignItems:"center",
-    paddingVertical:5,
-    borderBottomColor:"white",
-    borderBottomWidth:2,
-    borderStyle:"solid"
-    
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 5,
+    borderBottomColor: "white",
+    borderBottomWidth: 2,
+    borderStyle: "solid",
   },
   mapImg: {
     width: 50,
     height: 50,
     borderRadius: 50,
-    marginHorizontal:10
+    marginHorizontal: 10,
   },
-  mapTextBlack:{
-    fontSize:15,
-    fontWeight:"bold",
-    color:"white"
+  mapTextBlack: {
+    fontSize: 15,
+    fontWeight: "bold",
+    color: "white",
   },
-  mapText:{
-    fontSize:15,
-    fontWeight:"bold",
+  mapText: {
+    fontSize: 15,
+    fontWeight: "bold",
   },
   view: {
     flex: 1,
@@ -170,5 +168,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     fontWeight: "bold",
+  },
+  textBlack: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
   },
 });

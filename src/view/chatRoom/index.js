@@ -9,6 +9,7 @@ import {
   Button,
   StyleSheet,
   TouchableOpacity,
+  ImageBackground,
 } from "react-native";
 import { useSelector } from "react-redux";
 import ChatRoomHeader from "../../component/chatRoomHeader";
@@ -17,6 +18,15 @@ import React from "react";
 import backendURL from "../../config/backendURL";
 import socket from "../../config/io";
 
+const backgroundImageWhite = {
+  uri: "https://media.istockphoto.com/id/1409540606/vector/vector-contact-us-pattern-contact-us-seamless-background.jpg?s=612x612&w=0&k=20&c=3djpAIuo9fE9Mr4T7bLIUpEjqU7XaZk4wWt7aMUgU1o=",
+};
+
+const backgroundImageBlack = {
+  uri: "https://i.pinimg.com/originals/85/04/30/850430a750fb80c1ebaa5e740fc7cbd6.jpg",
+};
+
+// 
 export default function ChatRooms({ route, navigation }) {
   const [chatRoomData, setChatRoomData] = useState();
   const [message, setMessage] = useState("");
@@ -24,6 +34,8 @@ export default function ChatRooms({ route, navigation }) {
 
   const reduxUid = useSelector((state) => state);
   const currUserData = useSelector((state) => state.CurUserDataSlice.currUser);
+  const reduxTheme = useSelector((state) => state.ThemeSlice.theme);
+
 
   const _id = route.params._id || route.params.data.data._id;
 
@@ -94,63 +106,70 @@ export default function ChatRooms({ route, navigation }) {
         navigation={navigation}
       />
       <View style={styles.chatContainer}>
-        <ScrollView
-          ref={scrollViewRef}
-          nestedScrollEnabled={true}
-          onContentSizeChange={(contentWidth, contentHeight) => {
-            scrollViewRef.current?.scrollTo({ y: contentHeight });
-          }}
-          style={styles.scrollviewStyle}
+        <ImageBackground
+          source={reduxTheme ? backgroundImageBlack : backgroundImageWhite}
+          resizeMode="repeat"
+          style={{ flex: 1  }}
         >
-          {oldMessage &&
-            oldMessage.map((item, index) => {
-              return (
-                <View
-                  key={index}
-                  style={
-                    item.uid === currUserData._id
-                      ? styles.mapViewWithUid
-                      : styles.mapViewWithoutUid
-                  }
-                >
+          <ScrollView
+            ref={scrollViewRef}
+            nestedScrollEnabled={true}
+            onContentSizeChange={(contentWidth, contentHeight) => {
+              scrollViewRef.current?.scrollTo({ y: contentHeight });
+            }}
+            style={styles.scrollviewStyle}
+          >
+            {oldMessage &&
+              oldMessage.map((item, index) => {
+                return (
                   <View
+                    key={index}
                     style={
                       item.uid === currUserData._id
-                        ? styles.msgViewWithUid
-                        : styles.msgViewWithoutUid
+                        ? styles.mapViewWithUid
+                        : styles.mapViewWithoutUid
                     }
                   >
-                    <Text style={styles.msgText}>{item.message}</Text>
-                    <Text
+                    <View
                       style={
                         item.uid === currUserData._id
-                          ? styles.msgTimeWithUid
-                          : styles.msgTimeWithoutUid
+                          ? styles.msgViewWithUid
+                          : styles.msgViewWithoutUid
                       }
                     >
-                      {item.time}
-                    </Text>
+                      <Text style={styles.msgText}>{item.message}</Text>
+                      <Text
+                        style={
+                          item.uid === currUserData._id
+                            ? styles.msgTimeWithUid
+                            : styles.msgTimeWithoutUid
+                        }
+                      >
+                        {item.time}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              );
-            })}
-        </ScrollView>
+                );
+              })}
+          </ScrollView>
 
-        <View style={styles.inputView}>
-          <TextInput
-            style={styles.input}
-            placeholder={"Message"}
-            onChange={(e) => setMessage(e.nativeEvent.text)}
-            value={message}
-          />
-          <TouchableOpacity
-            onPress={() => {
-              message && handleSendMessage();
-            }}
-          >
-            <Ionicons name="send" size={25}></Ionicons>
-          </TouchableOpacity>
-        </View>
+          <View style={reduxTheme ? styles.inputViewBlack : styles.inputView}>
+            <TextInput
+              style={reduxTheme ? styles.inputBlack : styles.input}
+              placeholder={"Message"}
+              placeholderTextColor={reduxTheme ? "white" : "black"}
+              onChange={(e) => setMessage(e.nativeEvent.text)}
+              value={message}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                message && handleSendMessage();
+              }}
+            >
+              <Ionicons name="send" size={25} color={reduxTheme && "white"}></Ionicons>
+            </TouchableOpacity>
+          </View>
+        </ImageBackground>
       </View>
     </View>
   );
@@ -184,9 +203,38 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     marginHorizontal: 5,
   },
+  inputViewBlack: {
+    alignSelf: "flex-end",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    height: 50,
+    borderRadius: 30,
+    paddingHorizontal: 20,
+    borderColor: "white",
+    borderStyle: "solid",
+    borderWidth: 2,
+    backgroundColor: "#13151B",
+    shadowColor: "black",
+    shadowOffset: {
+      width: 6,
+      height: 6,
+    },
+    shadowOpacity: 0.58,
+    shadowRadius: 10.0,
+
+    elevation: 5,
+    marginVertical: 20,
+    marginHorizontal: 5,
+  },
   input: {
     width: "100%",
     flex: 1,
+  },
+  inputBlack: {
+    width: "100%",
+    flex: 1,
+    color:"white"
   },
   chatContainer: {
     flex: 1,
@@ -214,7 +262,8 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 10,
   },
   msgViewWithoutUid: {
-    backgroundColor: "#03a9f4",
+    // backgroundColor: "#03a9f4",
+    backgroundColor: "#808080",
     padding: 10,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,

@@ -14,18 +14,12 @@ import backendURL from "../../config/backendURL";
 import socket from "../../config/io";
 
 export default function NewChat({ navigation }) {
-  // const backendURL = "http://192.168.0.106:6000/";
 
   const [allUserData, setAllUserData] = useState("");
   const reduxUid = useSelector((state) => state);
+  const reduxTheme = useSelector((state) => state.ThemeSlice.theme);
   const currUserData = useSelector((state) => state.CurUserDataSlice.currUser);
-  // console.log(allUserData);
 
-  // socket.on(`message` , (users)=>{
-  //   console.log("socket===>",users)
-  //   // setAllUserData(allUserData => [...allUserData , users])
-  //   // setAllUserData(allUserData.push(users))
-  // })
 
   useEffect(() => {
     socket.on(`message`, (users) => {
@@ -92,15 +86,15 @@ export default function NewChat({ navigation }) {
 
   // console.log("allUserData", allUserData);
   return (
-    <View style={styles.container}>
-      <ScrollView style={styles.scrollViewStyle}>
+    <View style={reduxTheme ?  styles.containerBlack : styles.container}>
+      <ScrollView style={reduxTheme ? styles.scrollViewStyleBlack : styles.scrollViewStyle}>
         <View style={styles.iconView}>
           <Ionicons
             name="chatbubbles-sharp"
-            color="#03a9f4"
+            color={reduxTheme ? "white": "#03a9f4"}
             size={60}
           ></Ionicons>
-          <Text>Chat With You's Buddies!</Text>
+          <Text style={reduxTheme ? styles.logoTextBlack : styles.logoText}>Chat With You's Buddies!</Text>
         </View>
         <View>
           {allUserData &&
@@ -112,7 +106,7 @@ export default function NewChat({ navigation }) {
                     handleCreateChatRoom(item, index);
                   }}
                 >
-                  <View style={styles.mapView}>
+                  <View style={reduxTheme ?  styles.mapViewBlack : styles.mapView}>
                     <Image
                       source={{
                         uri: item.imageUri,
@@ -120,7 +114,7 @@ export default function NewChat({ navigation }) {
                       resizeMode="contain"
                       style={styles.mapImage}
                     />
-                    <Text style={styles.mapText}>{item.name}</Text>
+                    <Text style={reduxTheme ? styles.mapTextBlack : styles.mapText}>{item.name}</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -136,12 +130,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
+  containerBlack: {
+    flex: 1,
+    backgroundColor: "#13151B",
+  },
   mapView: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
     borderBottomColor: "black",
+    borderBottomWidth: 2,
+  },
+  mapViewBlack: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+    borderBottomColor: "white",
     borderBottomWidth: 2,
   },
   mapImage: {
@@ -153,6 +159,11 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontWeight: "bold",
   },
+  mapTextBlack: {
+    marginLeft: 10,
+    fontWeight: "bold",
+    color:"white"
+  },
   iconView: {
     display: "flex",
     alignItems: "center",
@@ -161,4 +172,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "white",
   },
+  scrollViewStyleBlack: {
+    flex: 1,
+    backgroundColor: "#13151B",
+  },
+  logoTextBlack:{
+    color:"white"
+  },
+  logoText:{
+    color:"black"
+  }
 });

@@ -35,15 +35,15 @@ const CustumDrawer = (props) => {
           }}
           style={styles.imgStyle}
         />
-        <Text style={styles.textStyle}>{currUserData.name}</Text>
+        <Text style={reduxTheme? styles.textStyleBlack : styles.textStyle}>{currUserData.name}</Text>
         <View style={styles.viewStyle}>
           <DrawerItemList {...props} />
         </View>
       </DrawerContentScrollView>
       <TouchableOpacity onPress={handleLogout}>
         <View style={styles.logoutViewStyle}>
-          <Ionicons name="log-out" size={30}></Ionicons>
-          <Text style={styles.logoutText}>Logout</Text>
+          <Ionicons name="log-out" size={30} color={reduxTheme ? "white" : "black"}></Ionicons>
+          <Text style={reduxTheme ? styles.logoutTextBlack: styles.logoutText}>Logout</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -73,6 +73,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 10,
   },
+  textStyleBlack: {
+    alignSelf: "center",
+    fontWeight: "bold",
+    fontSize: 20,
+    marginTop: 10,
+    color:"white"
+  },
   viewStyle: {
     marginTop: 10,
   },
@@ -85,5 +92,10 @@ const styles = StyleSheet.create({
   logoutText: {
     fontWeight: "bold",
     marginLeft: 10,
+  },
+  logoutTextBlack: {
+    fontWeight: "bold",
+    marginLeft: 10,
+    color:"white"
   },
 });
